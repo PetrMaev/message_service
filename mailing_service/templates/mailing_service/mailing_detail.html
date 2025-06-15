@@ -1,0 +1,43 @@
+{% extends 'mailing_service/base.html' %}
+{% load news_tags %}
+{% block title %}Рассылка{% endblock %}
+
+{% block content %}
+<p class="text-center h2">Рассылка</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Дата и время первой отправки</th>
+        <th scope="col">Дата и время окончания отправки</th>
+        <th scope="col">Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">{{ mailing.id }}</th>
+        <td>{{ mailing.start }}</td>
+        <td>{{ mailing.end }}</td>
+        <td>{{ mailing.status }}</td>
+    </tr>
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        {% if perms.mailing_service.can_deactivation_mailing or user == mailing.owner %}
+        <a href="{% url 'mailing_service:mailing_edit' mailing.pk %}">
+            <button type="button" class="btn btn-secondary">Редактировать</button>
+        </a>
+        {% endif %}
+        {% if user == mailing.owner %}
+        <a href="{% url 'mailing_service:mailing_delete' mailing.pk %}">
+            <button type="button" class="btn btn-danger">Удалить</button>
+        </a>
+        {% endif %}
+        <a href="{% url 'mailing_service:mailing_list' %}">
+            <button type="button" class="btn btn-primary">Назад</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
