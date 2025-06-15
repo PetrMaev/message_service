@@ -1,0 +1,44 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Пользователи сайта</p>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">Номер телефона</th>
+        <th scope="col">Страна</th>
+        <th scope="col">Активен/Неактивен</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <th scope="row">{{ user.id }}</th>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone_number }}</td>
+        <td>{{ user.country }}</td>
+        <td>{{ user.is_active }}</td>
+        <td>
+            <a href="{% url 'users:user_detail' user.pk %}" class="btn btn-outline-primary">Просмотр</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'mailing_service:home' %}">
+            <button type="button" class="btn btn-secondary">Вернуться на главную</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
