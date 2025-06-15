@@ -1,0 +1,43 @@
+{% extends 'mailing_service/base.html' %}
+{% load news_tags %}
+{% block title %}О клиенте{% endblock %}
+
+{% block content %}
+<p class="text-center h2">Получатель рассылок</p>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">ФИО</th>
+        <th scope="col">Комментарий</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">{{ client.id }}</th>
+        <td>{{ client.email }}</td>
+        <td>{{ client.full_name }}</td>
+        <td>{{ client.comment }}</td>
+    </tr>
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        {% if user == client.owner %}
+        <a href="{% url 'mailing_service:client_edit' client.pk %}">
+            <button type="button" class="btn btn-secondary">Редактировать</button>
+        </a>
+        {% endif %}
+        {% if user == client.owner %}
+        <a href="{% url 'mailing_service:client_delete' client.pk %}">
+            <button type="button" class="btn btn-danger">Удалить</button>
+        </a>
+        {% endif %}
+        <a href="{% url 'mailing_service:client_list' %}">
+            <button type="button" class="btn btn-primary">Назад</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

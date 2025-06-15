@@ -1,0 +1,50 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Получатели{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Получатели рассылок</p>
+</div>
+<div class="col mb-3">
+    <div class="card-body">
+        <a href="{% url 'mailing_service:client_create' %}">
+            <button type="button" class="btn btn-primary btn-lg">+Добавить получателя</button>
+        </a>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Email</th>
+        <th scope="col">ФИО</th>
+        <th scope="col">Комментарий</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for client in clients %}
+    {% if perms.mailing_service.view_client or user == client.owner %}
+    <tr>
+        <th scope="row">{{ client.id }}</th>
+        <td>{{ client.email }}</td>
+        <td>{{ client.full_name }}</td>
+        <td>{{ client.comment }}</td>
+        <td>
+            <a href="{% url 'mailing_service:client_detail' client.pk %}" class="btn btn-outline-primary">Просмотр</a>
+        </td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'mailing_service:home' %}">
+            <button type="button" class="btn btn-secondary">Вернуться на главную</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
