@@ -1,0 +1,110 @@
+{% extends 'mailing_service/base.html' %}
+{% load news_tags %}
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+
+<p class="text-center h1 mt-5 mb-5">Добро пожаловать в сервис рассылки</p>
+{% if user.is_authenticated %}
+<div class="col-12 mb-5 mt-5">
+    <div class="row row-cols-4 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card text-center border-primary mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="/static/images/add_message.png" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="mt-4">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <a href="{% url 'mailing_service:message_create' %}">
+                                        <button type="button" class="btn btn-primary btn-lg">Написать сообщение</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center border-primary mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="/static/images/add_mailing.png" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="mt-3">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <a href="{% url 'mailing_service:mailing_create' %}">
+                                        <button type="button" class="btn btn-primary btn-lg">Создать рассылку</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-primary">
+                    <p class="fs-5"> Количество рассылок: {{ mailings }}</p>
+                    <p class="fs-5"> Количество активных рассылок: {{ mailings_run }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center border-primary mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="/static/images/add_client.png" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="mt-3">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <a href="{% url 'mailing_service:client_create' %}">
+                                        <button type="button" class="btn btn-primary btn-lg">Добавить получателей
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-primary">
+                    <p class="fs-5"> Количество получателей: {{ clients }} </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+
+<div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-6">
+            <img src="/static/images/Home_page.png" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-6">
+            <div class="card-body">
+                <h5 class="card-title md-5 h2">СЕРВИС EMAIL РАССЫЛКИ</h5>
+                <p></p>
+                <p class="card-text md-5 h4">Вы сможете легко делать e-mail рассылки по вашей базе клиентов, создавать
+                    шаблоны и
+                    оформлять письма, вести статистику доставки. Попробуйте бесплатно, чтобы оценить эффективность и
+                    качество доставки!</p>
+                <p></p>
+                <p class="card-text">
+                    <a href="{% url 'users:register' %}">
+                        <button type="button" class="btn btn-primary btn-lg">Попробовать</button>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
