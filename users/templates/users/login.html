@@ -1,0 +1,26 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Авторизация</p>
+</div>
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </form>
+                <div class="card-footer bg-transparent border-success">
+                    <a href="{% url 'users:password_reset' %}" class="btn btn-link">Забыли пароль?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
