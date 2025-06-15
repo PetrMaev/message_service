@@ -1,0 +1,50 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Статистика</p>
+</div>
+<div class="col mb-3">
+    <div class="card-body">
+        <a href="{% url 'mailing_service:mailing_create' %}">
+            <button type="button" class="btn btn-primary btn-lg">+Создать рассылку</button>
+        </a>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Дата и время попытки</th>
+        <th scope="col">Статус</th>
+        <th scope="col">Владелец</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for attempt in attempts %}
+    {% if user == attempt.owner %}
+    <tr>
+        <th scope="row">{{ attempt.id }}</th>
+        <td>{{ attempt.date }}</td>
+        <td>{{ attempt.status }}</td>
+        <td>{{ attempt.owner }}</td>
+        <td>
+            <a href="{% url 'mailing_service:attempt_detail' attempt.pk %}" class="btn btn-outline-primary">Просмотр</a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'mailing_service:home' %}">
+            <button type="button" class="btn btn-secondary">Вернуться на главную</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
