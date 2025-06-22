@@ -19,6 +19,7 @@
         <th scope="col">ID</th>
         <th scope="col">Дата и время попытки</th>
         <th scope="col">Статус</th>
+        <th scope="col">Тема</th>
         <th scope="col">Владелец</th>
         <th scope="col"></th>
     </tr>
@@ -30,6 +31,7 @@
         <th scope="row">{{ attempt.id }}</th>
         <td>{{ attempt.date }}</td>
         <td>{{ attempt.status }}</td>
+        <td>{{ attempt.mailing.message.title }}</td>
         <td>{{ attempt.owner }}</td>
         <td>
             <a href="{% url 'mailing_service:attempt_detail' attempt.pk %}" class="btn btn-outline-primary">Просмотр</a>
