@@ -19,7 +19,9 @@
         <th scope="col">ID</th>
         <th scope="col">Дата и время первой отправки</th>
         <th scope="col">Дата и время окончания отправки</th>
+        <th scope="col">Тема</th>
         <th scope="col">Статус</th>
+        <th scope="col"></th>
         <th scope="col"></th>
     </tr>
     </thead>
@@ -30,7 +32,16 @@
         <th scope="row">{{ mailing.id }}</th>
         <td>{{ mailing.start }}</td>
         <td>{{ mailing.end }}</td>
+        <td>{{ mailing.message.title }}</td>
         <td>{{ mailing.status }}</td>
+        <td>
+        {% if mailing.status != mailing.COMPLETED %}
+        <form method="post" action="{% url 'mailing_service:mailing_send' mailing.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Отправить</button>
+        </form>
+        {% endif %}
+        </td>
         <td>
             <a href="{% url 'mailing_service:mailing_detail' mailing.pk %}" class="btn btn-outline-primary">Просмотр</a>
         </td>
@@ -48,3 +59,6 @@
 </div>
 
 {% endblock %}
+<a href="{% url 'mailing_service:mailing_send' mailing.pk %}">
+    <button type="submit" class="btn btn-success">Отправить</button>
+</a>
