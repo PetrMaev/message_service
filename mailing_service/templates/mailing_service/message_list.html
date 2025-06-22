@@ -1,0 +1,48 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Сообщения{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Сообщения</p>
+</div>
+<div class="col mb-3">
+    <div class="card-body">
+        <a href="{% url 'mailing_service:message_create' %}">
+            <button type="button" class="btn btn-primary btn-lg">+Написать сообщение</button>
+        </a>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Тема</th>
+        <th scope="col">Текст</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for message in messages %}
+    {% if perms.mailing_service.view_message or user == message.owner %}
+    <tr>
+        <th scope="row">{{ message.id }}</th>
+        <td>{{ message.title }}</td>
+        <td>{{ message.text|truncatechars:30 }}</td>
+        <td>
+            <a href="{% url 'mailing_service:message_detail' message.pk %}" class="btn btn-outline-primary">Просмотр</a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'mailing_service:home' %}">
+            <button type="button" class="btn btn-secondary">Вернуться на главную</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

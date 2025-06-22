@@ -1,0 +1,73 @@
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <div class="container">
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'mailing_service:home' %}">
+                        <div class="badge text-bg-primary text-wrap" style="width: 6rem;">
+                            Mailing Service
+                        </div>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <ul class="nav">
+                        {% if perms.users.can_view_list_user %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="{% url 'users:user_list' %}">Пользователи</a>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="{% url 'mailing_service:mailing_list' %}">Рассылки</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="{% url 'mailing_service:client_list' %}">Получатели</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="{% url 'mailing_service:message_list' %}">Сообщения</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="{% url 'mailing_service:attempt_list' %}">Статистика</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-dark dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        {{ user.email|truncatechars:15 }}
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{% url 'users:user_detail' user.pk %}">Профиль</a>
+                                        </li>
+                                        <li>
+                                            <form method="post" action="{% url 'users:logout' %}"
+                                                  style="display: inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn">Выход</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    {% else %}
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a href="{% url 'users:login' %}" class="btn btn-outline-primary">Вход</a>
+                            <a href="{% url 'users:register' %}" class="btn btn-primary">Регистрация</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>

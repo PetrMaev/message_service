@@ -1,0 +1,15 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Создание сообщения для рассылки{% endblock %}
+
+{% block content %}
+<h2>Создание сообщения для рассылки</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Создать</button>
+    <a href="{% url 'mailing_service:home' %}" class="btn btn-secondary">Отмена</a>
+</form>
+
+{% endblock %}

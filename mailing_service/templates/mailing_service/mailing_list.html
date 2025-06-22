@@ -1,0 +1,64 @@
+{% extends 'mailing_service/base.html' %}
+
+{% block title %}Рассылки{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+    <p class="text-center h1">Рассылки</p>
+</div>
+<div class="col mb-3">
+    <div class="card-body">
+        <a href="{% url 'mailing_service:mailing_create' %}">
+            <button type="button" class="btn btn-primary btn-lg">+Создать рассылку</button>
+        </a>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Дата и время первой отправки</th>
+        <th scope="col">Дата и время окончания отправки</th>
+        <th scope="col">Тема</th>
+        <th scope="col">Статус</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for mailing in mailings %}
+    {% if perms.mailing_service.view_mailing or user == mailing.owner %}
+    <tr>
+        <th scope="row">{{ mailing.id }}</th>
+        <td>{{ mailing.start }}</td>
+        <td>{{ mailing.end }}</td>
+        <td>{{ mailing.message.title }}</td>
+        <td>{{ mailing.status }}</td>
+        <td>
+        {% if mailing.status != mailing.COMPLETED %}
+        <form method="post" action="{% url 'mailing_service:mailing_send' mailing.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Отправить</button>
+        </form>
+        {% endif %}
+        </td>
+        <td>
+            <a href="{% url 'mailing_service:mailing_detail' mailing.pk %}" class="btn btn-outline-primary">Просмотр</a>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+<div class="card-footer bg-transparent border-success">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'mailing_service:home' %}">
+            <button type="button" class="btn btn-secondary">Вернуться на главную</button>
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+<a href="{% url 'mailing_service:mailing_send' mailing.pk %}">
+    <button type="submit" class="btn btn-success">Отправить</button>
+</a>

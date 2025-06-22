@@ -16,12 +16,12 @@ isort = "^6.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
-django = "^5.2.2"
 psycopg2 = "^2.9.10"
 python-dotenv = "^1.1.0"
 pillow = "^11.2.1"
 ipython = "^9.3.0"
 redis = "^6.2.0"
+django = "^5.2.3"
 
 [build-system]
 requires = ["poetry-core"]
