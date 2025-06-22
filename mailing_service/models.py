@@ -62,10 +62,14 @@ class Mailing(models.Model):
     ]
 
     start = models.DateTimeField(
+        null=True,
+        blank=True,
         verbose_name="Дата и время первой отправки",
         help_text="Укажите дату и время первой отправки в формате: YYYY-MM-DD HH:MM:SS",
     )
     end = models.DateTimeField(
+        null=True,
+        blank=True,
         verbose_name="Дата и время окончания отправки",
         help_text="Укажите дату и время окончания отправки в формате: YYYY-MM-DD HH:MM:SS",
     )
