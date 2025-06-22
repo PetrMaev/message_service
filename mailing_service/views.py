@@ -1,13 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import send_mail
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.core.cache import cache
 
 from config.settings import EMAIL_HOST_USER
@@ -180,42 +181,66 @@ class MailingCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        # Сохраняем объект, чтобы получить id
-        mailing = form.save()
-        # Получаем объект сообщения через ForeignKey
-        message = mailing.message
-        subject = message.title
-        message_text = message.text
-        from_email = EMAIL_HOST_USER
-        clients = form.cleaned_data["clients"]
-        recipient_list = [client.email for client in clients]
-        send_mail(subject, message_text, from_email, recipient_list)
-        # Добавляем получателей после сохранения
-        mailing.clients.set(clients)
-        mailing_attempt = form.save()
-        email = EmailMessage(subject=subject, body=message_text, from_email=from_email, to=recipient_list)
-        try:
-            response = email.send(fail_silently=False)
-            # Проверяем, если количество отправленных писем равно количеству адресатов
-            if response == len(recipient_list):
-                status = "Успешно"
-            else:
-                status = "Не успешно"
-            owner = self.request.user
-            mailing_attempt = MailingAttempt(
-                date=mailing.start, mailing=mailing, status=status, mail_server_answer=response, owner=owner
-            )
-        except Exception as e:
-            # Если произошла ошибка, выводим её сообщение
-            print(f"Ошибка отправки: {e}")
-
-        mailing_attempt.save()
         return super().form_valid(form)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({"request": self.request})
         return kwargs
+
+
+# Контроллер отправки
+class MailingSendView(View):
+    model = Mailing
+    success_url = reverse_lazy("mailing_service:mailing_list")
+
+    def post(self, request, **kwargs):
+        mailing_id = kwargs['pk']
+        mailing = Mailing.objects.get(id=mailing_id)
+
+        message = mailing.message
+        subject = message.title
+        message_text = message.text
+        from_email = EMAIL_HOST_USER
+        clients = mailing.clients.all()
+        recipient_list = [client.email for client in clients]
+
+        mailing.start = timezone.now()
+        mailing.status = Mailing.RUNNING
+
+        owner = self.request.user
+        mailing_attempt = MailingAttempt(
+            date=mailing.start,
+            mailing=mailing,
+            status='',
+            mail_server_answer='',
+            owner=owner
+        )
+        mailing_attempt.save()
+
+        try:
+            send_mail(subject, message_text, from_email, recipient_list)
+
+            mailing_attempt.status = MailingAttempt.SUCCESS
+            mailing.status = Mailing.COMPLETED  # саму рассылку тоже помечаем как завершенную
+
+        except Exception as e:
+            # попытка.status ставим fail
+            mailing_attempt.status = MailingAttempt.FAIL
+            # попытка.mail_server_answer ставим str(e)
+            mailing_attempt.mail_server_answer = str(e)
+
+        else:
+            # попытка.status ставим success
+            mailing_attempt.status = MailingAttempt.SUCCESS
+            mailing_attempt.mail_server_answer = "Доставлено"
+            mailing.status = Mailing.COMPLETED  # саму рассылку тоже помечаем как завершенную
+            mailing.end = timezone.now()
+
+        mailing_attempt.save()
+        mailing.save()
+
+        return render(request, "mailing_service/mailing_list.html")
 
 
 class MailingUpdateView(UpdateView):
@@ -253,7 +278,7 @@ class MailingDeleteView(DeleteView):
         return HttpResponseForbidden(render(request, "403.html"))
 
 
-@method_decorator(cache_page(60), name='dispatch')
+# @method_decorator(cache_page(60), name='dispatch')
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     template_name = "mailing_service/mailing_list.html"
@@ -291,7 +316,7 @@ class MailingAttemptCreateView(CreateView):
         return kwargs
 
 
-@method_decorator(cache_page(60), name='dispatch')
+# @method_decorator(cache_page(60), name='dispatch')
 class MailingAttemptListView(LoginRequiredMixin, ListView):
     model = MailingAttempt
     template_name = "mailing_service/attempt_list.html"
